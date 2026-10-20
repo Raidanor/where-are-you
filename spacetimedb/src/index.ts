@@ -50,3 +50,13 @@ export const setName = spacetimedb.reducer(
         }
     }
 );
+
+export const updateLocation = spacetimedb.reducer(
+    { lat: t.f64(), lng: t.f64() },
+    (_ctx, { lat, lng }) => {
+        const me = _ctx.db.user.identity.find(_ctx.sender)
+        if (me) {
+            _ctx.db.user.identity.update({...me, lat, lng })
+        }
+    }
+);
