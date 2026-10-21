@@ -50,8 +50,45 @@ function FriendMap() {
         if (isActive) updateLocation(pos)
     }, [isActive, pos])
 
-    
+    // To mimic movement without really going outside
 
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === 'ArrowUp')    setPos(p => ({...p, lat: p.lat + STEP}))
+            if (e.key === 'ArrowDown')  setPos(p => ({...p, lat: p.lat - STEP}))
+            if (e.key === 'ArrowLeft')  setPos(p => ({...p, lng: p.lng - STEP}))
+            if (e.key === 'ArrowRight') setPos(p => ({...p, lng: p.lng + STEP}))
+        }
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+    }, [])
 
+    const useMyLocation = () => {
+        navigator.geolocation.getCurrentPosition(p => 
+            setPos({lat: p.coords.latitude, lng: p.coords.longitude})
+        )
+    }
+
+    return (
+        <main>
+            <MapContainer
+                center={[44.650853, -63.592444]}
+                zoom = {16}
+                style= {{ height: '100vh' }}
+            >
+                <TileLayer url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+                {users
+                    .filter(u => u.online && u.name)
+                    .map(u => (
+                        <Marker
+                            
+                        />
+                    ))
+                    
+                }
+            </MapContainer>
+        </main> 
+    )
 
 }
