@@ -39,7 +39,7 @@ function FriendMap() {
     // random number for person if no name found
 
     useEffect(() => {
-        if (isActive) return;
+        if (!isActive) return;
 
         sessionStorage.setItem('name', myName)
         setName({ name: myName })
@@ -47,8 +47,9 @@ function FriendMap() {
     }, [isActive, myName])
 
     useEffect(() => {
-        if (isActive) updateLocation(pos)
-    }, [isActive, pos])
+        if (!isActive) return
+        updateLocation(pos)
+    }, [isActive, pos, updateLocation])
 
     // To mimic movement without really going outside
 
@@ -82,13 +83,32 @@ function FriendMap() {
                     .filter(u => u.online && u.name)
                     .map(u => (
                         <Marker
-                            
+                            key={u.identity.toHexString()}
+                            position={[u.lat, u.lng]}
+                            icon={pin(
+                                u.name, u.identity.toHexString() === identity?.toHexString()
+                            )}
                         />
                     ))
                     
                 }
             </MapContainer>
+
+            <div className="hud">
+                <span className="hint">
+                    {isActive ? 'Move with the arow keys': 'Connecting...'}
+                </span>
+                <input value={myName} onChange={(e => setMyName(e.target.value))} />
+                <button onClick={useMyLocation}>Use my real location</button>
+            </div>
         </main> 
     )
+}
 
+export default function Page(){
+    return(
+        <Providers>
+            <FriendMap />
+        </Providers>
+    )
 }
